@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="ipca.example.bimbyrecipes.RecipeAddActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="10dp"
+        android:background="#a63737" />
+    <Button
+        android:id="@+id/buttonPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Take Photo"/>
+    <EditText
+        android:id="@+id/editTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title Recepi"
+        android:layout_margin="10dp"
+        android:textSize="24sp" />
+    <EditText
+        android:id="@+id/editProcedure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Procedure"
+        android:lines="4"
+        android:layout_margin="10dp"
+        android:textSize="24sp" />
+
+</LinearLayout>
