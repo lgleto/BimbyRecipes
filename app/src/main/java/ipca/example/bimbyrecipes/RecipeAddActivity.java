@@ -18,6 +18,7 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
     Button buttonPhoto;
     EditText editTextTitle;
     EditText editTextProcedure;
+    Bitmap bm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
             switch (requestCode){
                 case CAMERA_PIC_REQUEST:
                     Bundle bundle=data.getExtras();
-                    Bitmap bm = (Bitmap) bundle.get("data");
+                    bm = (Bitmap) bundle.get("data");
                     imageView.setImageBitmap(bm);
                     break;
             }
@@ -77,7 +78,10 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
         if (id == R.id.action_save) {
             Recipe recipe = new Recipe(
                     editTextTitle.getText().toString(),
-                    editTextProcedure.getText().toString(),"",null);
+                    editTextProcedure.getText().toString(),
+                    Utils.saveBitmap(bm),
+                    null);
+
             finish();
             return true;
         }

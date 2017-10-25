@@ -15,6 +15,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG="bimbyrecipes";
+
     List<Recipe> recipes=new ArrayList<>();
 
     @Override
