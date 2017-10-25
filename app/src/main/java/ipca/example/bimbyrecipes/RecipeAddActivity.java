@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import ipca.example.bimbyrecipes.models.Recipe;
+
 public class RecipeAddActivity extends AppCompatActivity implements View.OnClickListener{
 
     ImageView imageView;

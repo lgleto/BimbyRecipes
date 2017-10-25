@@ -1,4 +1,4 @@
-package ipca.example.bimbyrecipes;
+package ipca.example.bimbyrecipes.models;
 
 /**
  * Created by lourenco on 18/10/17.

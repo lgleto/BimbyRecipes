@@ -1,6 +1,7 @@
 package ipca.example.bimbyrecipes;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
@@ -16,6 +17,15 @@ import java.util.concurrent.BrokenBarrierException;
  */
 
 public class Utils {
+
+    public static Bitmap loadBitmap(String src){
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(src, options);
+
+        return bitmap;
+    }
 
     public static String saveBitmap(Bitmap bm){
         if (bm!=null){

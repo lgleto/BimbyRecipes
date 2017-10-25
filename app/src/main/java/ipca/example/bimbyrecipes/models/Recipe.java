@@ -1,7 +1,9 @@
-package ipca.example.bimbyrecipes;
+package ipca.example.bimbyrecipes.models;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ipca.example.bimbyrecipes.models.Ingredient;
 
 /**
  * Created by lourenco on 18/10/17.
