@@ -15,21 +15,34 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 import ipca.example.bimbyrecipes.models.Recipe;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG="bimbyrecipes";
 
-    List<Recipe> recipes=new ArrayList<>();
+    RealmResults<Recipe> recipes;
 
     ListView listView;
     RecipeAdapter recipeAdapter;
+
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize Realm
+        Realm.init(this);
+        // Get a Realm instance for this thread
+        realm = Realm.getDefaultInstance();
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -42,14 +55,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        recipes.add(new Recipe("Bacalhau Brás","sdfwesfwes sdgkjwsdgjsndv ","",null));
-        recipes.add(new Recipe("Papas de Sarrabulho","sdfwesfwes sdgkjwsdgjsndv ","",null));
-        recipes.add(new Recipe("Vitela Assada","sdfwesfwes sdgkjwsdgjsndv ","",null));
-        recipes.add(new Recipe("Croquetes","sdfwesfwes sdgkjwsdgjsndv ","",null));
 
+        recipes=realm.where(Recipe.class).findAll();
         listView=(ListView)findViewById(R.id.listView);
         recipeAdapter=new RecipeAdapter();
         listView.setAdapter(recipeAdapter);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        recipes=realm.where(Recipe.class).findAll();
         recipeAdapter.notifyDataSetChanged();
     }
 

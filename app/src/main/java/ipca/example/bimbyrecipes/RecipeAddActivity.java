@@ -35,6 +35,14 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
         buttonPhoto.setOnClickListener(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bm!=null){
+            imageView.setImageBitmap(bm);
+        }
+    }
+
     private static final int CAMERA_PIC_REQUEST = 1001;
 
     @Override
@@ -84,6 +92,7 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
                     Utils.saveBitmap(bm),
                     null);
 
+            Recipe.addItem(recipe);
             finish();
             return true;
         }

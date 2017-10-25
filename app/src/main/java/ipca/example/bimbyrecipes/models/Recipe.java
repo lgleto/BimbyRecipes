@@ -3,20 +3,24 @@ package ipca.example.bimbyrecipes.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmObject;
 import ipca.example.bimbyrecipes.models.Ingredient;
 
 /**
  * Created by lourenco on 18/10/17.
  */
 
-public class Recipe {
+public class Recipe extends RealmObject {
 
     String title;
     String procedures;
     String imageUri;
-    List<Ingredient> ingredients = new ArrayList<>();
+    //List<Ingredient> ingredients = new ArrayList<>();
+    RealmList<Ingredient> ingredients;
 
-    public Recipe(String title, String procedures, String imageUri, List<Ingredient> ingredients) {
+    public Recipe(String title, String procedures, String imageUri, RealmList<Ingredient> ingredients) {
         this.title = title;
         this.procedures = procedures;
         this.imageUri = imageUri;
@@ -27,7 +31,7 @@ public class Recipe {
         this.title = "";
         this.procedures = "";
         this.imageUri = "";
-        this.ingredients = new ArrayList<>();
+
     }
 
     public String getTitle() {
@@ -54,11 +58,11 @@ public class Recipe {
         this.imageUri = imageUri;
     }
 
-    public List<Ingredient> getIngredients() {
+    public RealmList<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(RealmList<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -70,5 +74,19 @@ public class Recipe {
                 ", imageUri='" + imageUri + '\'' +
                 ", ingredients=" + ingredients +
                 '}';
+    }
+
+    public static void addItem(final Recipe recipe){
+        Realm realm=Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction(){
+            @Override
+            public void execute(Realm realm) {
+                Recipe recipeNew=realm.createObject(Recipe.class);
+                recipeNew.setTitle(recipe.getTitle());
+                recipeNew.setProcedures(recipe.getProcedures());
+                recipeNew.setImageUri(recipe.getImageUri());
+                recipeNew.setIngredients(recipe.getIngredients());
+            }
+        });
     }
 }

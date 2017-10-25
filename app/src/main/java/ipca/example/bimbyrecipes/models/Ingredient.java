@@ -1,13 +1,16 @@
 package ipca.example.bimbyrecipes.models;
 
+import io.realm.RealmObject;
+
 /**
  * Created by lourenco on 18/10/17.
  */
 
-public class Ingredient {
+public class Ingredient extends RealmObject{
 
     String title;
     Float qtd;
+    Recipe recipe;
 
     public Ingredient(String title, Float qtd) {
         this.title = title;
