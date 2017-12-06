@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,11 +171,28 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
                     Utils.saveBitmap(bm),
                     null);
 
-            Recipe.addItem(recipe);
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference recipiesRef = database.getReference("recipies");
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            recipiesRef.child(user.getUid())
+                    .child("recipe")
+                    .setValue(recipe)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+
+                            }
+                        }
+                    });
+            //Recipe.addItem(recipe);
 
             for (Ingredient ing :ingredients){
                 ing.setRecipe(recipe);
-                Ingredient.addItem(ing);
+                //Ingredient.addItem(ing);
             }
 
             finish();

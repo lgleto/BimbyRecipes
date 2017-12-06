@@ -21,6 +21,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,26 +38,21 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG="bimbyrecipes";
 
-    RealmResults<Recipe> recipes;
+    List<Recipe> recipes = new ArrayList<>();
 
     ListView listView;
     RecipeAdapter recipeAdapter;
 
-    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize Realm
-        Realm.init(this);
-        // Get a Realm instance for this thread
-        realm = getRealmIntance();
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        recipes=realm.where(Recipe.class).findAll();
         listView=(ListView)findViewById(R.id.listView);
         recipeAdapter=new RecipeAdapter();
         listView.setAdapter(recipeAdapter);
@@ -80,23 +77,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG,"BLE permission has already been granted.");
             }
         }
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("Hello, World!");
     }
 
-    Realm getRealmIntance(){
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-        try {
-            return Realm.getInstance(realmConfiguration);
-        } catch (RealmMigrationNeededException e){
-            try {
-                Realm.deleteRealm(realmConfiguration);
-                //Realm file has been deleted.
-                return Realm.getInstance(realmConfiguration);
-            } catch (Exception ex){
-                throw ex;
-                //No Realm file to remove.
-            }
-        }
-    }
 
     private static final int PERMISSION_REQUEST_WRITE_EXSD = 1002;
 
@@ -161,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        recipes=realm.where(Recipe.class).findAll();
         recipeAdapter.notifyDataSetChanged();
     }
 

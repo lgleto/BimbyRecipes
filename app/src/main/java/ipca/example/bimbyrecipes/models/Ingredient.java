@@ -7,7 +7,7 @@ import io.realm.RealmObject;
  * Created by lourenco on 18/10/17.
  */
 
-public class Ingredient extends RealmObject{
+public class Ingredient {
 
     String title;
     String qtd;
@@ -58,16 +58,5 @@ public class Ingredient extends RealmObject{
                 '}';
     }
 
-    public static void addItem(final Ingredient ingredient){
-        Realm realm=Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction(){
-            @Override
-            public void execute(Realm realm) {
-                Ingredient ingredientNew=realm.createObject(Ingredient.class);
-                ingredientNew.setTitle(ingredient.getTitle());
-                ingredientNew.setQtd(ingredient.getQtd());
-                ingredientNew.setRecipe(ingredient.getRecipe());
-            }
-        });
-    }
+
 }
