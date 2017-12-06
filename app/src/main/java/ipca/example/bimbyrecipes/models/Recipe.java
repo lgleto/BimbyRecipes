@@ -78,6 +78,8 @@ public class Recipe extends RealmObject {
 
     public static void addItem(final Recipe recipe){
         Realm realm=Realm.getDefaultInstance();
+        Recipe recipeNew;
+        realm.executeTransaction();
         realm.executeTransaction(new Realm.Transaction(){
             @Override
             public void execute(Realm realm) {
@@ -88,5 +90,6 @@ public class Recipe extends RealmObject {
                 recipeNew.setIngredients(recipe.getIngredients());
             }
         });
+
     }
 }

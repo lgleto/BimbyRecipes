@@ -1,5 +1,6 @@
 package ipca.example.bimbyrecipes.models;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 
 /**
@@ -9,17 +10,19 @@ import io.realm.RealmObject;
 public class Ingredient extends RealmObject{
 
     String title;
-    Float qtd;
+    String qtd;
+
+
     Recipe recipe;
 
-    public Ingredient(String title, Float qtd) {
+    public Ingredient(String title, String qtd) {
         this.title = title;
         this.qtd = qtd;
     }
 
     public Ingredient() {
         this.title = "";
-        this.qtd = 0.f;
+        this.qtd = "";
     }
 
     public String getTitle() {
@@ -30,13 +33,22 @@ public class Ingredient extends RealmObject{
         this.title = title;
     }
 
-    public Float getQtd() {
+    public String getQtd() {
         return qtd;
     }
 
-    public void setQtd(Float qtd) {
+    public void setQtd(String qtd) {
         this.qtd = qtd;
     }
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+    }
+
 
     @Override
     public String toString() {
@@ -44,5 +56,18 @@ public class Ingredient extends RealmObject{
                 "title='" + title + '\'' +
                 ", qtd=" + qtd +
                 '}';
+    }
+
+    public static void addItem(final Ingredient ingredient){
+        Realm realm=Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction(){
+            @Override
+            public void execute(Realm realm) {
+                Ingredient ingredientNew=realm.createObject(Ingredient.class);
+                ingredientNew.setTitle(ingredient.getTitle());
+                ingredientNew.setQtd(ingredient.getQtd());
+                ingredientNew.setRecipe(ingredient.getRecipe());
+            }
+        });
     }
 }

@@ -2,23 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="230dp">
+    android:gravity="center_vertical"
+    android:layout_height="80dp">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <TextView
+        android:id="@+id/textViewQTD"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_margin="10dp"
-        android:background="#bebebe"
-        android:cropToPadding="true"
-        android:scaleType="centerCrop" />
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:layout_marginStart="10dp"
+        android:textSize="18sp"/>
+
+
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title Recepi"
-        android:layout_margin="10dp"
-        android:textSize="24sp"/>
+        android:text="Ingredient"
+        android:layout_marginStart="10dp"
+        android:textSize="18sp"/>
 
 
 </LinearLayout>

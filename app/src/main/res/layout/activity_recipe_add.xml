@@ -7,32 +7,71 @@
     android:orientation="vertical"
     tools:context="ipca.example.bimbyrecipes.RecipeAddActivity">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_margin="10dp"
-        android:background="#a63737" />
-    <Button
-        android:id="@+id/buttonPhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Take Photo"/>
+
     <EditText
         android:id="@+id/editTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title Recepi"
-        android:layout_margin="10dp"
+        android:hint="Recipe Title"
         android:textSize="24sp" />
-    <EditText
-        android:id="@+id/editProcedure"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Procedure"
-        android:lines="4"
-        android:layout_margin="10dp"
-        android:textSize="24sp" />
+        android:orientation="horizontal"
+        >
+        <RelativeLayout
+            android:layout_width="150dp"
+            android:layout_height="150dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:adjustViewBounds="true"
+                android:background="#cecece"
+                android:cropToPadding="true"
+                android:scaleType="centerCrop" />
+            <Button
+                android:id="@+id/buttonPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/imageView"
+                android:layout_alignEnd="@+id/imageView"
+                android:text="Photo" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/editProcedure"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Discribe procedures"
+            android:lines="4"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/listViewIngredients"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addIngredient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/listViewIngredients"
+            android:layout_alignEnd="@+id/listViewIngredients"
+            android:layout_margin="@dimen/fab_margin"
+            app:srcCompat="@android:drawable/ic_input_add" />
+    </RelativeLayout>
+
+
+
 
 </LinearLayout>
