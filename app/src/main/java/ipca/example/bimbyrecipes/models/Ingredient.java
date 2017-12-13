@@ -12,9 +12,6 @@ public class Ingredient {
     String title;
     String qtd;
 
-
-    Recipe recipe;
-
     public Ingredient(String title, String qtd) {
         this.title = title;
         this.qtd = qtd;
@@ -40,15 +37,6 @@ public class Ingredient {
     public void setQtd(String qtd) {
         this.qtd = qtd;
     }
-
-    public Recipe getRecipe() {
-        return recipe;
-    }
-
-    public void setRecipe(Recipe recipe) {
-        this.recipe = recipe;
-    }
-
 
     @Override
     public String toString() {

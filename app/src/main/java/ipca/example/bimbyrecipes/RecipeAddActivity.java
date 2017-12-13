@@ -3,6 +3,7 @@ package ipca.example.bimbyrecipes;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -21,14 +22,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import ipca.example.bimbyrecipes.models.Ingredient;
 import ipca.example.bimbyrecipes.models.Recipe;
@@ -45,10 +53,14 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
     ListView listViewIngredients;
     IngredientAdapter ingredientAdapter;
 
+    private StorageReference mStorageRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_add);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         imageView = (ImageView) findViewById(R.id.imageView);
         buttonPhoto = (Button) findViewById(R.id.buttonPhoto);
@@ -97,6 +109,8 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
 
             }
         });
+
+
     }
 
     @Override
@@ -165,37 +179,57 @@ public class RecipeAddActivity extends AppCompatActivity implements View.OnClick
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
-            Recipe recipe = new Recipe(
-                    editTextTitle.getText().toString(),
-                    editTextProcedure.getText().toString(),
-                    Utils.saveBitmap(bm),
-                    null);
 
+            File file=new File(Utils.saveBitmap(bm));
+            Uri fileUri = Uri.fromFile(file);
+            StorageReference riversRef = mStorageRef.child("images/"+file.getName());
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference recipiesRef = database.getReference("recipies");
-
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-            recipiesRef.child(user.getUid())
-                    .child("recipe")
-                    .setValue(recipe)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+            riversRef.putFile(fileUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Get a URL to the uploaded content
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                            }
+                            Recipe recipe = new Recipe(
+                                    UUID.randomUUID().toString(),
+                                    editTextTitle.getText().toString(),
+                                    editTextProcedure.getText().toString(),
+                                    downloadUrl.toString(),
+                                    ingredients);
+
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference recipiesRef = database.getReference("recipies");
+
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                            recipiesRef.child(user.getUid())
+                                    .child(recipe.getId())
+                                    .setValue(recipe)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+                                                finish();
+                                            }
+                                        }
+                                    });
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle unsuccessful uploads
+                            // ...
                         }
                     });
-            //Recipe.addItem(recipe);
 
-            for (Ingredient ing :ingredients){
-                ing.setRecipe(recipe);
-                //Ingredient.addItem(ing);
-            }
 
-            finish();
+
+
+
+
             return true;
         }
 

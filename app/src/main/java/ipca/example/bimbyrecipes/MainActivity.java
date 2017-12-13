@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +22,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmList;
-import io.realm.RealmResults;
-import io.realm.exceptions.RealmMigrationNeededException;
 import ipca.example.bimbyrecipes.models.Recipe;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,11 +48,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         listView=(ListView)findViewById(R.id.listView);
         recipeAdapter=new RecipeAdapter();
@@ -148,7 +141,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        recipeAdapter.notifyDataSetChanged();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("recipies");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                recipes.clear();
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                    //Log.d("test", d.toString());
+                    for (DataSnapshot d1: d.getChildren()) {
+                        Recipe recipe = d1.getValue(Recipe.class);
+                        recipes.add(recipe);
+                    }
+                }
+                recipeAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        
+
     }
 
     class RecipeAdapter extends BaseAdapter{
@@ -176,17 +193,33 @@ public class MainActivity extends AppCompatActivity {
             }
 
             TextView textView = (TextView)view.findViewById(R.id.textViewTitle);
-            ImageView imageView= (ImageView)view.findViewById(R.id.imageView);
+            final ImageView imageView= (ImageView)view.findViewById(R.id.imageView);
 
             textView.setText(recipes.get(i).getTitle());
             String pathImage=recipes.get(i).getImageUri();
-            if (pathImage!=null){
-                imageView.setImageBitmap(Utils.loadBitmap(pathImage));
-            }
+
+
+            new AsyncTask<String,Void,Bitmap>(){
+
+                @Override
+                protected Bitmap doInBackground(String... strings) {
+                    Bitmap bm=Utils.getBitmapFromURL(strings[0]);
+                    return bm;
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    super.onPostExecute(bitmap);
+                    imageView.setImageBitmap(bitmap);
+
+                }
+            }.execute(pathImage,null,null);
 
             return view;
         }
     }
+
+
 
 
 }
