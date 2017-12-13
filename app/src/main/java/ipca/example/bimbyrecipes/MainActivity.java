@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -37,10 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG="bimbyrecipes";
 
-    List<Recipe> recipes = new ArrayList<>();
 
-    ListView listView;
-    RecipeAdapter recipeAdapter;
 
 
     @Override
@@ -48,18 +48,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, RecipeAddActivity.class);
-                startActivity(intent);
-            }
-        });
+        MainFragment mainFragment= new MainFragment();
+        FragmentManager fragmentManager= getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.container,mainFragment)
+                .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(null)
+                .commit();
 
-        listView=(ListView)findViewById(R.id.listView);
-        recipeAdapter=new RecipeAdapter();
-        listView.setAdapter(recipeAdapter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(MainActivity.this,
@@ -136,88 +131,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("recipies");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                recipes.clear();
-                for (DataSnapshot d: dataSnapshot.getChildren()) {
-                    //Log.d("test", d.toString());
-                    for (DataSnapshot d1: d.getChildren()) {
-                        Recipe recipe = d1.getValue(Recipe.class);
-                        recipes.add(recipe);
-                    }
-                }
-                recipeAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        
-
-    }
-
-    class RecipeAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return recipes.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return recipes.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            if (view==null){
-                view=getLayoutInflater().inflate(R.layout.recipe_row,null);
-            }
-
-            TextView textView = (TextView)view.findViewById(R.id.textViewTitle);
-            final ImageView imageView= (ImageView)view.findViewById(R.id.imageView);
-
-            textView.setText(recipes.get(i).getTitle());
-            String pathImage=recipes.get(i).getImageUri();
-
-
-            new AsyncTask<String,Void,Bitmap>(){
-
-                @Override
-                protected Bitmap doInBackground(String... strings) {
-                    Bitmap bm=Utils.getBitmapFromURL(strings[0]);
-                    return bm;
-                }
-
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    super.onPostExecute(bitmap);
-                    imageView.setImageBitmap(bitmap);
-
-                }
-            }.execute(pathImage,null,null);
-
-            return view;
-        }
-    }
 
 
 
